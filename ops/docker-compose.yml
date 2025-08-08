@@ -1,0 +1,33 @@
+services:
+  order-classifier:
+    build:
+      context: ..
+      dockerfile: ops/Dockerfile
+    container_name: order-classifier-service
+    ports:
+      - "40012:40012"
+    environment:
+      - PORT=40012
+      - HOST=0.0.0.0
+      - CACHE_TTL=60
+      - LOG_LEVEL=INFO
+    deploy:
+      resources:
+        limits:
+          memory: 512M       # Much lighter for CPU-only rule-based system
+          cpus: '1'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:40012/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    restart: unless-stopped
+
+networks:
+  default:
+    name: order-classifier-network
+    driver: bridge

@@ -1,0 +1,813 @@
+{
+  "metadata": {
+    "version": "4.0",
+    "description": "Comprehensive test cases for rule-based NLP intent classification system with extensive coverage of verbal variations, TWAP orders, range orders, and missing token scenarios using proven pattern matching techniques.",
+    "total_cases": 56,
+    "last_updated": "2025-08-07",
+    "actions_supported": [
+      "CREATE_ORDER",
+      "CONNECT_WALLET",
+      "DISCONNECT_WALLET",
+      "CHANGE_CHAIN",
+      "CHANGE_PAIR",
+      "GET_ORDER_INFO"
+    ],
+    "order_types_supported": [
+      "MARKET",
+      "LIMIT",
+      "TWAP",
+      "RANGE"
+    ]
+  },
+  "test_cases": [
+    {
+      "id": "market_001",
+      "text": "buy 1000 usdt",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "makerAsset": "USDT",
+        "takingAmount": 1000.0
+      },
+      "category": "market_orders",
+      "description": "Simple market buy, spending a quote asset."
+    },
+    {
+      "id": "market_002",
+      "text": "sell 2 eth now",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "ETH",
+        "takingAmount": 2.0
+      },
+      "category": "market_orders",
+      "description": "Market sell of a base asset."
+    },
+    {
+      "id": "market_003",
+      "text": "purchase 500 usdc immediately",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "makerAsset": "USDC",
+        "takingAmount": 500.0
+      },
+      "category": "market_orders",
+      "description": "Market order with immediate execution, spending a quote asset."
+    },
+    {
+      "id": "market_004",
+      "text": "buy ethereum",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "makerAsset": "ETH"
+      },
+      "category": "market_orders",
+      "description": "Simple token buy without amount."
+    },
+    {
+      "id": "market_005",
+      "text": "sell bitcoin asap",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "BTC"
+      },
+      "category": "market_orders",
+      "description": "Market sell with ASAP."
+    },
+    {
+      "id": "limit_001",
+      "text": "buy 1000 usdt at 4000",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "takerAsset": "USDT",
+        "takingAmount": 1000.0,
+        "limitPrice": 4000.0
+      },
+      "category": "limit_orders",
+      "description": "Limit buy of USDT - user provides base asset (maker) to get USDT (taker)."
+    },
+    {
+      "id": "limit_002",
+      "text": "sell 2 eth at $3500",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "makerAsset": "ETH",
+        "makingAmount": 2.0,
+        "limitPrice": 3500.0
+      },
+      "category": "limit_orders",
+      "description": "Limit sell with dollar sign - user provides ETH (maker), expects quote currency (taker)."
+    },
+    {
+      "id": "limit_003",
+      "text": "buy bitcoin at 110000",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "takerAsset": "BTC",
+        "limitPrice": 110000.0
+      },
+      "category": "limit_orders",
+      "description": "Limit buy without amount."
+    },
+    {
+      "id": "new_001",
+      "text": "buy 1000 usdt of eth",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "USDT",
+        "takingAmount": 1000.0,
+        "makerAsset": "ETH"
+      },
+      "category": "market_orders",
+      "description": "Market buy with specified maker asset."
+    },
+    {
+      "id": "new_002",
+      "text": "sell 1 eth for usdt",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "ETH",
+        "takingAmount": 1.0,
+        "makerAsset": "USDT"
+      },
+      "category": "market_orders",
+      "description": "Market sell with specified taker asset."
+    },
+    {
+      "id": "new_003",
+      "text": "buy 1000 usdt worth of eth",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "USDT",
+        "takingAmount": 1000.0,
+        "makerAsset": "ETH"
+      },
+      "category": "market_orders",
+      "description": "Market buy with 'worth of' syntax."
+    },
+    {
+      "id": "new_004",
+      "text": "buy 1 eth with usdt at price 3000",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "makerAsset": "USDT",
+        "takerAsset": "ETH",
+        "takingAmount": 1.0,
+        "limitPrice": 3000.0
+      },
+      "category": "limit_orders",
+      "description": "Limit buy specifying amount of asset to acquire."
+    },
+    {
+      "id": "new_005",
+      "text": "sell 1 eth and get usdc in return",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "ETH",
+        "takingAmount": 1.0,
+        "makerAsset": "USDC"
+      },
+      "category": "market_orders",
+      "description": "Sell order with explicitly requested return asset."
+    },
+    {
+      "id": "edge_001",
+      "text": "",
+      "expected_action": null,
+      "expected_order_type": null,
+      "expected_params": {},
+      "category": "edge_cases",
+      "description": "Empty string should not trigger an action."
+    },
+    {
+      "id": "edge_002",
+      "text": "   ",
+      "expected_action": null,
+      "expected_order_type": null,
+      "expected_params": {},
+      "category": "edge_cases",
+      "description": "Whitespace only should not trigger an action."
+    },
+    {
+      "id": "edge_003",
+      "text": "hello world",
+      "expected_action": null,
+      "expected_order_type": null,
+      "expected_params": {},
+      "category": "edge_cases",
+      "description": "Unrelated text should not trigger an action."
+    },
+    {
+      "id": "merged_003",
+      "text": "I want to buy 1 BTC for 110000 USDT",
+      "expected_action": "CREATE_ORDER",
+      "category": "limit_orders",
+      "description": "Formal limit order specifying amounts for both assets.",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "makerAsset": "USDT",
+        "takerAsset": "BTC",
+        "makingAmount": 110000,
+        "takingAmount": 1.0
+      }
+    },
+    {
+      "id": "merged_017",
+      "text": "long 5K in ETH",
+      "expected_action": "CREATE_ORDER",
+      "category": "market_orders",
+      "description": "Trading slang for buying ETH by spending USDT.",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "makerAsset": "ETH",
+        "takerAsset": "USDT",
+        "takingAmount": 5000.0
+      }
+    },
+    {
+      "id": "merged_018",
+      "text": "short BTC with 10K",
+      "expected_action": "CREATE_ORDER",
+      "category": "market_orders",
+      "description": "Short position, selling BTC to acquire USDT.",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "BTC",
+        "makerAsset": "USDT",
+        "makingAmount": 10000.0
+      }
+    },
+    {
+      "id": "merged_034",
+      "text": "Get me 100 USDC worth of BTC",
+      "expected_action": "CREATE_ORDER",
+      "category": "market_orders",
+      "description": "Acquiring a base asset for a specified quote amount.",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "makerAsset": "BTC",
+        "takerAsset": "USDC",
+        "takingAmount": 100.0
+      }
+    },
+    {
+      "id": "merged_036",
+      "text": "Place a limit buy for 2 ETH at 3400 each",
+      "expected_action": "CREATE_ORDER",
+      "category": "limit_orders",
+      "description": "Detailed limit buy - user provides USDT (maker), receives ETH (taker).",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "takerAsset": "ETH",
+        "takingAmount": 2.0,
+        "limitPrice": 3400.0
+      }
+    },
+    {
+      "id": "pair_003",
+      "text": "trade aave tokens",
+      "expected_action": "CHANGE_PAIR",
+      "expected_params": {
+        "pair": "AAVE/USDT"
+      },
+      "category": "pair_operations",
+      "description": "Trade AAVE tokens, defaulting to USDT pair."
+    },
+    {
+      "id": "merged_012",
+      "text": "switch to AAVE",
+      "expected_action": "CHANGE_PAIR",
+      "category": "pair_operations",
+      "description": "Base token only, defaulting to USDT pair.",
+      "expected_params": {
+        "pair": "AAVE/USDT"
+      }
+    },
+    {
+      "id": "merged_030",
+      "text": "trade 1INCH token",
+      "expected_action": "CHANGE_PAIR",
+      "category": "pair_operations",
+      "description": "1INCH token selection, defaulting to USDT pair.",
+      "expected_params": {
+        "pair": "1INCH/USDT"
+      }
+    },
+    {
+      "id": "merged_042",
+      "text": "ETH",
+      "expected_action": "CHANGE_PAIR",
+      "category": "pair_operations",
+      "description": "Just token name, defaulting to ETH/USDT pair.",
+      "expected_params": {
+        "pair": "ETH/USDT"
+      }
+    },
+    {
+      "id": "twap_001",
+      "text": "buy eth starting today until september",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "TWAP",
+      "expected_params": {
+        "type": "TWAP",
+        "takerAsset": "ETH",
+        "startDate": "today",
+        "endDate": "december"
+      },
+      "category": "twap_orders",
+      "description": "TWAP order with start and end dates specified."
+    },
+    {
+      "id": "twap_002",
+      "text": "create twap for eth using usdt from tomorrow to sunday",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "TWAP",
+      "expected_params": {
+        "type": "TWAP",
+        "makerAsset": "USDT",
+        "takerAsset": "ETH",
+        "startDate": "tomorrow",
+        "endDate": "sunday"
+      },
+      "category": "twap_orders",
+      "description": "TWAP order specifying both assets and time range."
+    },
+    {
+      "id": "twap_003",
+      "text": "sell until next month",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "TWAP",
+      "expected_params": {
+        "type": "TWAP",
+        "makerAsset": "base",
+        "takerAsset": "quote",
+        "endDate": "next month"
+      },
+      "category": "twap_orders",
+      "description": "TWAP sell order with vague time specification."
+    },
+    {
+      "id": "twap_004",
+      "text": "accumulate bitcoin over the next week",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "TWAP",
+      "expected_params": {
+        "type": "TWAP",
+        "takerAsset": "BTC",
+        "startDate": "monday",
+        "endDate": "sunday"
+      },
+      "category": "twap_orders",
+      "description": "TWAP accumulation order with week timeframe."
+    },
+    {
+      "id": "twap_005",
+      "text": "buy gradually over 3 days",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "TWAP",
+      "expected_params": {
+        "type": "TWAP",
+        "startDate": "now",
+        "endDate": "in 3 days",
+        "makerAsset": "quote",
+        "takerAsset": "base"
+      },
+      "category": "twap_orders",
+      "description": "TWAP order with specific day duration."
+    },
+    {
+      "id": "twap_006",
+      "text": "distribute my 1000 usdt eth purchase over 2 weeks",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "TWAP",
+      "expected_params": {
+        "type": "TWAP",
+        "makerAsset": "USDT",
+        "takerAsset": "ETH",
+        "makingAmount": 1000.0,
+        "startDate": "now",
+        "endDate": "in 2 weeks"
+      },
+      "category": "twap_orders",
+      "description": "TWAP order with amount and 2-week duration."
+    },
+    {
+      "id": "range_001",
+      "text": "buy from 4000 to 5000",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "RANGE",
+      "expected_params": {
+        "type": "RANGE",
+        "startPrice": 4000.0,
+        "endPrice": 5000.0
+      },
+      "category": "range_orders",
+      "description": "Range order with price boundaries."
+    },
+    {
+      "id": "range_002",
+      "text": "sell between 3000 and 3500 in 10 steps",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "RANGE",
+      "expected_params": {
+        "type": "RANGE",
+        "makerAsset": "base",
+        "takerAsset": "quote",
+        "startPrice": 3000.0,
+        "endPrice": 3500.0,
+        "steps": 10
+      },
+      "category": "range_orders",
+      "description": "Range sell order with price range."
+    },
+    {
+      "id": "range_003",
+      "text": "buy 1000 usdt worth between 2000 and 5000",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "RANGE",
+      "expected_params": {
+        "type": "RANGE",
+        "takerAsset": "USDT",
+        "takingAmount": 1000,
+        "startPrice": 2000,
+        "endPrice": 5000
+      },
+      "category": "range_orders",
+      "description": "Range order with amount and percentage steps."
+    },
+    {
+      "id": "range_004",
+      "text": "set buy orders from 2000 to 2500",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "RANGE",
+      "expected_params": {
+        "type": "RANGE",
+        "startPrice": 2000.0,
+        "endPrice": 2500.0
+      },
+      "category": "range_orders",
+      "description": "Range buy orders across price range."
+    },
+    {
+      "id": "missing_tokens_001",
+      "text": "buy at 4000",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "makerAsset": "quote",
+        "takerAsset": "base",
+        "limitPrice": 4000.0
+      },
+      "category": "missing_tokens",
+      "description": "Limit order with missing tokens, using base/quote placeholders."
+    },
+    {
+      "id": "missing_tokens_002",
+      "text": "sell at 3500",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "takerAsset": "quote",
+        "makerAsset": "base",
+        "limitPrice": 3500.0
+      },
+      "category": "missing_tokens",
+      "description": "Limit sell with missing tokens."
+    },
+    {
+      "id": "missing_tokens_003",
+      "text": "limit buy at 2000",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "makerAsset": "quote",
+        "takerAsset": "base",
+        "limitPrice": 2000.0
+      },
+      "category": "missing_tokens",
+      "description": "Explicit limit buy without token specification."
+    },
+    {
+      "id": "missing_tokens_004",
+      "text": "place order at 4500",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "makerAsset": "base",
+        "takerAsset": "quote",
+        "limitPrice": 4500.0
+      },
+      "category": "missing_tokens",
+      "description": "Generic order placement at price level."
+    },
+    {
+      "id": "missing_tokens_005",
+      "text": "buy 1000 at market",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takingAmount": 1000.0,
+        "takerAsset": "base"
+      },
+      "category": "missing_tokens",
+      "description": "Market buy with amount but no token specified."
+    },
+    {
+      "id": "missing_tokens_006",
+      "text": "sell 500 now",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takingAmount": 500.0,
+        "takerAsset": "base"
+      },
+      "category": "missing_tokens",
+      "description": "Market sell with amount but no token specified."
+    },
+    {
+      "id": "verbal_001",
+      "text": "acquire 1 ethereum",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "makerAsset": "ETH"
+      },
+      "category": "verbal_variations",
+      "description": "Alternative phrasing for buying ethereum."
+    },
+    {
+      "id": "verbal_002",
+      "text": "dump all my bitcoin",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "BTC",
+        "takingAmount": "all"
+      },
+      "category": "verbal_variations",
+      "description": "Colloquial expression for selling bitcoin."
+    },
+    {
+      "id": "verbal_003",
+      "text": "get rid of my eth position",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "ETH",
+        "takingAmount": "all"
+      },
+      "category": "verbal_variations",
+      "description": "Casual phrasing for selling ETH."
+    },
+    {
+      "id": "verbal_004",
+      "text": "load up on btc with all my usdt",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "makerAsset": "BTC",
+        "takerAsset": "USDT",
+        "takingAmount": "all"
+      },
+      "category": "verbal_variations",
+      "description": "Slang expression for buying bitcoin."
+    },
+    {
+      "id": "verbal_005",
+      "text": "take profit on 2 eth",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "ETH",
+        "takingAmount": 2.0
+      },
+      "category": "verbal_variations",
+      "description": "Trading jargon for selling to realize profits."
+    },
+    {
+      "id": "verbal_006",
+      "text": "I need to offload 1000 usdc",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "USDC",
+        "takingAmount": 1000.0
+      },
+      "category": "verbal_variations",
+      "description": "Formal phrasing for selling USDC."
+    },
+    {
+      "id": "verbal_007",
+      "text": "scoop up some aave, $100",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "makerAsset": "AAVE",
+        "takingAmount": 100
+      },
+      "category": "verbal_variations",
+      "description": "Casual expression for buying AAVE."
+    },
+    {
+      "id": "conditional_001",
+      "text": "buy 500 usdt if price goes below 3000",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "takerAsset": "USDT",
+        "takingAmount": 500.0,
+        "limitPrice": 3000.0
+      },
+      "category": "conditional_orders",
+      "description": "Conditional buy order with price trigger."
+    },
+    {
+      "id": "conditional_002", 
+      "text": "sell when price hits 5000",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "takerAsset": "base",
+        "makerAsset": "quote",
+        "limitPrice": 5000.0
+      },
+      "category": "conditional_orders",
+      "description": "Conditional sell with price target."
+    },
+    {
+      "id": "quantity_001",
+      "text": "buy .1 bitcoin",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "makerAsset": "BTC",
+        "makerAmount": 0.1
+      },
+      "category": "quantity_expressions",
+      "description": "Vague quantity expression for buying."
+    },
+    {
+      "id": "quantity_002",
+      "text": "sell half my ethereum",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "ETH",
+        "takingAmount": "half"
+      },
+      "category": "quantity_expressions", 
+      "description": "Relative quantity for selling."
+    },
+    {
+      "id": "advanced_twap_001",
+      "text": "buy 1000 usdt worth of eth every monday until december",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "TWAP",
+      "expected_params": {
+        "type": "TWAP",
+        "makingAmount": 1000.0,
+        "makerAsset": "USDT",
+        "takerAsset": "ETH",
+        "startDate": "today",
+        "endDate": "december",
+        "interval": 604800
+      },
+      "category": "twap_orders",
+      "description": "Advanced TWAP with specific amount, assets, and time interval."
+    },
+    {
+      "id": "advanced_range_001", 
+      "text": "set up grid orders between 2500 and 3500 with 5% spacing",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "RANGE",
+      "expected_params": {
+        "type": "RANGE",
+        "startPrice": 2500.0,
+        "endPrice": 3500.0,
+        "stepPct": 3,
+        "makerAsset": "base",
+        "takerAsset": "quote"
+      },
+      "category": "range_orders",
+      "description": "Grid trading setup with price range and percentage spacing."
+    },
+    {
+      "id": "advanced_twap_002",
+      "text": "buy 200 usdt into bitcoin hourly for a day", 
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "TWAP",
+      "expected_params": {
+        "type": "TWAP",
+        "takingAmount": 200.0,
+        "takerAsset": "BTC", 
+        "endDate": "tomorrow"
+      },
+      "category": "special_orders",
+      "description": "Dollar cost averaging with specific amount and frequency."
+    },
+    {
+      "id": "advanced_range_002",
+      "text": "place ladder orders from 4000 to 5000 every 2%",
+      "expected_action": "CREATE_ORDER", 
+      "expected_order_type": "RANGE",
+      "expected_params": {
+        "type": "RANGE",
+        "startPrice": 4000.0,
+        "endPrice": 5000.0,
+        "stepPct": 2,
+        "makerAsset": "quote",
+        "takerAsset": "base"
+      },
+      "category": "range_orders",
+      "description": "Ladder orders across price range with percentage steps."
+    }
+  ],
+  "validation_suite": [
+    {
+      "id": "validation_001",
+      "text": "buy 1000 usdt",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "MARKET",
+      "expected_params": {
+        "type": "MARKET",
+        "takerAsset": "USDT",
+        "takingAmount": 1000.0
+      },
+      "description": "Basic market order validation"
+    },
+    {
+      "id": "validation_002",
+      "text": "sell 2 eth at 3500",
+      "expected_action": "CREATE_ORDER",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "makerAsset": "ETH",
+        "makingAmount": 2.0,
+        "limitPrice": 3500.0
+      },
+      "description": "Limit sell validation - user provides ETH (maker)"
+    },
+    {
+      "id": "validation_008",
+      "text": "I want to buy 1 BTC for 110000 USDT",
+      "expected_action": "CREATE_ORDER",
+      "description": "Validation: Formal limit order",
+      "expected_order_type": "LIMIT",
+      "expected_params": {
+        "type": "LIMIT",
+        "makerAsset": "USDT",
+        "makingAmount": 110000,
+        "takerAsset": "BTC",
+        "takingAmount": 1.0
+      }
+    }
+  ]
+}
